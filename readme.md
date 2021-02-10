@@ -35,6 +35,14 @@ pulumi config set google_oauth_secret_id [value] --secret
 pulumi up
 ```
 
+## Start a minimal cluster for testing/development
+To start up a cluster without the monitoring etc we have stripped down file (`index.minimal.ts`) with just the important stuff rather than the default `index.ts`
+
+```
+cp index.minimal.ts index.ts
+pulumi up
+```
+
 ## Update the DNS records
 
 ```
