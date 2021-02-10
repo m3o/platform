@@ -31,7 +31,7 @@ export const cluster = new ocean.KubernetesCluster("cluster", {
 export const nodePool = new ocean.KubernetesNodePool("node-pool", {
   name: "micro",
   clusterId: cluster.id,
-  size: "s-8vcpu-16gb" as any,
+  size: conf.get("node_slug") || "s-8vcpu-16gb" as any,
   minNodes: 2,
   maxNodes: 6,
   autoScale: true,
