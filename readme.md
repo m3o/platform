@@ -36,10 +36,11 @@ pulumi up
 ```
 
 ## Start a minimal cluster for testing/development
-To start up a cluster without the monitoring etc we have stripped down file (`index.minimal.ts`) with just the important stuff rather than the default `index.ts`
+To start up a cluster without the monitoring etc we have stripped down file (`index.minimal.ts`) with just the important stuff rather than the default `index.ts`. We should also dial down the size of the nodes to something cheap like `s-2vcpu-4gb`. 
 
 ```
 cp index.minimal.ts index.ts
+pulumi config set digitalocean:node_slug "s-2vcpu-4gb"
 pulumi up
 ```
 
