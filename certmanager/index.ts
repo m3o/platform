@@ -58,7 +58,7 @@ export const letsEncryptCerts = new crd.certmanager.v1.ClusterIssuer(
           {
             dns01: {
               cloudflare: {
-                email: "ben@micro.mu",
+                email:  conf.require("cloudflare-email"),
                 apiTokenSecretRef: {
                   name: cfAPIKey.metadata.name,
                   key: "cloudflare"
