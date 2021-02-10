@@ -114,6 +114,33 @@ export const clientTLSDefault = new crd.certmanager.v1.Certificate(
   { provider }
 );
 
+export const clientTLSCockroach = new crd.certmanager.v1.Certificate(
+  "cockroach-tls-client-cockroach",
+  {
+    metadata: {
+      name: "cockroach-tls-client",
+      namespace: "cockroach"
+    },
+    spec: {
+      secretName: "cockroach-tls-client",
+      subject: {
+        organizations: ["m3o"]
+      },
+      isCA: false,
+      privateKey: {
+        algorithm: "ECDSA",
+        size: 256
+      },
+      commonName: "root",
+      issuerRef: {
+        name: "ca",
+        kind: "ClusterIssuer"
+      }
+    }
+  },
+  { provider }
+);
+
 export const peerTLS = new crd.certmanager.v1.Certificate(
   "cockroach-tls-peer",
   {
@@ -245,7 +272,7 @@ const debugDeployment = new k8s.apps.v1.Deployment(
       }
     }
   },
-  { provider }
+  { provider, dependsOn: clientTLSCockroach }
 );
 
 const cronBackupJob = new k8s.batch.v1beta1.CronJob(
