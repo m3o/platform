@@ -6,3 +6,4 @@ import "./nats";
 import "./nginx";
 import "./cockroach";
 import "./kata";
+import "./redis";

@@ -12,7 +12,7 @@ config:
   digitalocean:token:
     secure: AAABAIrkcJfJvxhw1yl5gpi1rp+DXAteha8LcHD30HR9AHIka+sIk+TZuh/mRcElWul8DW782X/3fTSElhasgaSO96NDOeK1iAyg5ACuE9xiZsn4zZM7/NHqlJY2v6Sb
   gcp:project:
-    secure: AAABACuzDZ6i23h5tVnYxzVrxDWKJFOKeIZTXQvJWJ4LBo3I3XawEA==
+    secure: AAABAC4eu6J7hqI435aPFgrW8bmWbqifBkXfI86hTR1QOvVkjkdxqmeGRQ==
   gcp:region: europe-west2
   kubernetes:kubeconfig: somewherethatdoesntexist
   m3o:analytics_db_password:

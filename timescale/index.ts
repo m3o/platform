@@ -41,7 +41,7 @@ export const tls = new crd.certmanager.v1.Certificate(
 );
 
 export const bucket = new ocean.SpacesBucket(
-  "timescale-backup",
+  "timescale-backups",
   {
     region: "ams3"
   },

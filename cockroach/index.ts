@@ -305,7 +305,7 @@ const cronBackupJob = new k8s.batch.v1beta1.CronJob(
                       "spacesAccessId"
                     )}&AWS_SECRET_ACCESS_KEY=${cf.require(
                       "spacesSecretKey"
-                    )}&AWS_ENDPOINT=${bucket.name}.${
+                    )}&AWS_ENDPOINT=${
                       bucket.region
                     }.digitaloceanspaces.com';`
                   ],
