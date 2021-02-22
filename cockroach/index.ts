@@ -294,20 +294,15 @@ const cronBackupJob = new k8s.batch.v1beta1.CronJob(
                   name: "cockroach-debug",
                   image: "cockroachdb/cockroach:v20.1.3",
                   command: [
-                    "./cockroach",
-                    "sql",
-                    "--certs-dir=/certs",
-                    "--host=cockroach-cockroachdb.cockroach",
-                    "-e",
-                    pulumi.interpolate`BACKUP TO 's3://${
-                      bucket.name
-                    }/?AWS_ACCESS_KEY_ID=${cf.require(
+                    "/bin/bash",
+                    "-c",
+                    pulumi.interpolate`./cockroach sql --certs-dir=/certs --host=cockroach-cockroachdb.cockroach -e "BACKUP TO 's3://${bucket.name}/\`date +%s\`/?AWS_ACCESS_KEY_ID=${cf.require(
                       "spacesAccessId"
                     )}&AWS_SECRET_ACCESS_KEY=${cf.require(
                       "spacesSecretKey"
                     )}&AWS_ENDPOINT=${
                       bucket.region
-                    }.digitaloceanspaces.com';`
+                    }.digitaloceanspaces.com';"`
                   ],
                   volumeMounts: [{ name: "certs", mountPath: "/certs" }]
                 }
