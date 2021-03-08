@@ -40,16 +40,6 @@ export const tls = new crd.certmanager.v1.Certificate(
   { provider }
 );
 
-export const bucket = new ocean.SpacesBucket(
-  "timescale-backups",
-  {
-    region: "ams3"
-  },
-  {
-    parent: project
-  }
-);
-
 export const creds = new k8s.core.v1.Secret(
   "timescale-credentials",
   {
@@ -60,23 +50,6 @@ export const creds = new k8s.core.v1.Secret(
       PATRONI_SUPERUSER_PASSWORD: cf.require("patroni_superuser_password"),
       PATRONI_REPLICATION_PASSWORD: cf.require("patroni_replication_password"),
       PATRONI_admin_PASSWORD: cf.require("patroni_admin_password")
-    }
-  },
-  { provider }
-);
-
-export const pgBackrest = new k8s.core.v1.Secret(
-  "timescale-pgbackrest",
-  {
-    metadata: {
-      namespace: namespace.metadata.name
-    },
-    stringData: {
-      PGBACKREST_REPO1_S3_BUCKET: bucket.name,
-      PGBACKREST_REPO1_S3_REGION: bucket.region as any,
-      PGBACKREST_REPO1_S3_KEY: conf.require("spacesAccessId"),
-      PGBACKREST_REPO1_S3_KEY_SECRET: conf.require("spacesSecretKey"),
-      PGBACKREST_REPO1_S3_ENDPOINT: "ams3.digitaloceanspaces.com"
     }
   },
   { provider }
@@ -101,7 +74,6 @@ export const chart = new k8s.helm.v3.Chart(
       secretNames: {
         credentials: creds.metadata.name,
         certificate: tls.spec.secretName,
-        pgbackrest: pgBackrest.metadata.name
       },
       patroni: {
         postgresql: {
@@ -133,14 +105,7 @@ export const chart = new k8s.helm.v3.Chart(
         }
       },
       backup: {
-        enabled: true,
-        envFrom: [
-          {
-            secretRef: {
-              name: pgBackrest.metadata.name
-            }
-          }
-        ]
+        enabled: false,
       },
       persistentVolumes: {
         data: {
@@ -157,4 +122,4 @@ export const chart = new k8s.helm.v3.Chart(
   { provider }
 );
 
-export default [namespace, tls, bucket, creds, pgBackrest];
+export default [namespace, tls, creds];
