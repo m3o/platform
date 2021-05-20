@@ -16,6 +16,7 @@ export const redis = new ocean.DatabaseCluster("api-redis-cluster",
     },
     {
         parent: project,
+      dependsOn: cluster
     }
 );
 
@@ -29,4 +30,7 @@ export const redisfw = new ocean.DatabaseFirewall("api-redis-fw",
             }
         ]
     },
+  {
+    dependsOn: redis
+  }
 )

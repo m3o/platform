@@ -2,14 +2,14 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as ocean from "@pulumi/digitalocean";
 import * as etcd from "../etcd";
-import * as nats from "../nats";
 import * as cockroach from "../cockroach";
 import * as crd from "../crd";
+import * as redis from "../redis"
 import { project, provider } from "../cluster";
 import { ObjectMeta } from "../crd/meta/v1";
 import { Output } from "@pulumi/pulumi";
 
-const image = "ghcr.io/m3o/platform:20201123154137fa65d6";
+const image = "ghcr.io/domwong/micro:latest";
 const imagePullPolicy = "Always";
 const replicas = 2;
 
@@ -245,31 +245,7 @@ function microDeployment(srv: string, port: number): k8s.apps.v1.Deployment {
     },
     {
       name: "MICRO_BROKER_ADDRESS",
-      value: "nats.nats:4222"
-    },
-    {
-      name: "MICRO_BROKER_TLS_CA",
-      value: "/certs/broker/ca.crt"
-    },
-    {
-      name: "MICRO_BROKER_TLS_CERT",
-      value: "/certs/broker/tls.crt"
-    },
-    {
-      name: "MICRO_BROKER_TLS_KEY",
-      value: "/certs/broker/tls.key"
-    },
-    {
-      name: "MICRO_EVENTS_TLS_CA",
-      value: "/certs/events/ca.crt"
-    },
-    {
-      name: "MICRO_EVENTS_TLS_CERT",
-      value: "/certs/events/tls.crt"
-    },
-    {
-      name: "MICRO_EVENTS_TLS_KEY",
-      value: "/certs/events/tls.key"
+      value: redis.redis.uri
     },
     {
       name: "MICRO_REGISTRY_TLS_CA",
@@ -414,16 +390,6 @@ function microDeployment(srv: string, port: number): k8s.apps.v1.Deployment {
                     readOnly: true
                   },
                   {
-                    name: "nats-client-certs",
-                    mountPath: "/certs/broker",
-                    readOnly: true
-                  },
-                  {
-                    name: "nats-client-certs",
-                    mountPath: "/certs/events",
-                    readOnly: true
-                  },
-                  {
                     name: "cockroachdb-client-certs",
                     mountPath: "/certs/store",
                     readOnly: true
@@ -436,12 +402,6 @@ function microDeployment(srv: string, port: number): k8s.apps.v1.Deployment {
                 name: "etcd-client-certs",
                 secret: {
                   secretName: (etcd.clientTLS.spec as any).secretName
-                }
-              },
-              {
-                name: "nats-client-certs",
-                secret: {
-                  secretName: (nats.clientTLS.spec as any).secretName
                 }
               },
               {
