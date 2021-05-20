@@ -2,11 +2,9 @@
 package platform
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"io/ioutil"
 	"os"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/micro/micro/v3/profile"
 	"github.com/micro/micro/v3/service/auth"
 	"github.com/micro/micro/v3/service/auth/jwt"
@@ -26,12 +24,12 @@ import (
 	"github.com/urfave/cli/v2"
 
 	// plugins
-	"github.com/micro/micro/plugin/s3/v3"
 	"github.com/micro/micro/plugin/cockroach/v3"
 	"github.com/micro/micro/plugin/etcd/v3"
-	natsBroker "github.com/micro/micro/plugin/nats/broker/v3"
-	natsStream "github.com/micro/micro/plugin/nats/stream/v3"
 	"github.com/micro/micro/plugin/prometheus/v3"
+	redisBroker "github.com/micro/micro/plugin/redis/broker/v3"
+	redisstream "github.com/micro/micro/plugin/redis/stream/v3"
+	"github.com/micro/micro/plugin/s3/v3"
 )
 
 func init() {
@@ -48,7 +46,7 @@ var Profile = &profile.Profile{
 		// of certs so it can't be defaulted like the broker and registry.
 		store.DefaultStore = cockroach.NewStore(store.Nodes(ctx.String("store_address")))
 		config.DefaultConfig, _ = storeConfig.NewConfig(store.DefaultStore, "")
-		profile.SetupBroker(natsBroker.NewBroker(broker.Addrs(ctx.String("broker_address"))))
+		profile.SetupBroker(redisBroker.NewBroker(broker.Addrs(ctx.String("broker_address"))))
 		profile.SetupRegistry(etcd.NewRegistry(registry.Addrs(ctx.String("registry_address"))))
 		profile.SetupJWT(ctx)
 		profile.SetupConfigSecretKey(ctx)
@@ -63,7 +61,7 @@ var Profile = &profile.Profile{
 		}
 
 		var err error
-		events.DefaultStream, err = natsStream.NewStream(natsStreamOpts(ctx)...)
+		events.DefaultStream, err = redisstream.NewStream(redisStreamOpts(ctx)...)
 		if err != nil {
 			logger.Fatalf("Error configuring stream: %v", err)
 		}
@@ -104,31 +102,20 @@ var Profile = &profile.Profile{
 }
 
 // natsStreamOpts returns a slice of options which should be used to configure nats
-func natsStreamOpts(ctx *cli.Context) []natsStream.Option {
-	opts := []natsStream.Option{
-		natsStream.Address(ctx.String("broker_address")),
-		natsStream.ClusterID("nats-streaming"),
+func redisStreamOpts(ctx *cli.Context) []redisstream.Option {
+	fullAddr := ctx.String("broker_address")
+	o, err := redis.ParseURL(fullAddr)
+	if err != nil {
+		logger.Fatalf("Error configuring redis connection, failed to parse %s", fullAddr)
 	}
 
-	// Parse event TLS certs
-	if len(ctx.String("events_tls_cert")) > 0 || len(ctx.String("events_tls_key")) > 0 {
-		cert, err := tls.LoadX509KeyPair(ctx.String("events_tls_cert"), ctx.String("events_tls_key"))
-		if err != nil {
-			logger.Fatalf("Error loading event TLS cert: %v", err)
-		}
-
-		// load custom certificate authority
-		caCertPool := x509.NewCertPool()
-		if len(ctx.String("events_tls_ca")) > 0 {
-			crt, err := ioutil.ReadFile(ctx.String("events_tls_ca"))
-			if err != nil {
-				logger.Fatalf("Error loading event TLS certificate authority: %v", err)
-			}
-			caCertPool.AppendCertsFromPEM(crt)
-		}
-
-		cfg := &tls.Config{Certificates: []tls.Certificate{cert}, RootCAs: caCertPool}
-		opts = append(opts, natsStream.TLSConfig(cfg))
+	opts := []redisstream.Option{
+		redisstream.Address(o.Addr),
+		redisstream.User(o.Username),
+		redisstream.Password(o.Password),
+	}
+	if o.TLSConfig != nil {
+		opts = append(opts, redisstream.TLSConfig(o.TLSConfig))
 	}
 
 	return opts
