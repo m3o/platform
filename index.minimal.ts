@@ -1,9 +1,8 @@
 import "./certmanager";
 import "./cluster";
+import "./postgres";
 import "./redis";
 import "./micro";
 import "./etcd";
-import "./nats";
 import "./nginx";
-import "./cockroach";
 import "./kata";

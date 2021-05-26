@@ -5,13 +5,13 @@ import { project, vpc, cluster } from "../cluster";
 
 const conf = new pulumi.Config("digitalocean");
 
-export const redis = new ocean.DatabaseCluster("api-redis-cluster",
+export const postgres = new ocean.DatabaseCluster("postgres-cluster",
     {
-        engine: "redis",
+        engine: "pg",
         nodeCount: 2,
         region: conf.require("region") as ocean.Region,
-        size: "db-m-2vcpu-16gb" as ocean.DatabaseSlug,
-        version: "6",
+        size: "db-g-2vcpu-8gb" as ocean.DatabaseSlug,
+        version: "13",
         privateNetworkUuid: vpc.id,
     },
     {
@@ -20,9 +20,9 @@ export const redis = new ocean.DatabaseCluster("api-redis-cluster",
     }
 );
 
-export const redisfw = new ocean.DatabaseFirewall("api-redis-fw",
+export const postgresfw = new ocean.DatabaseFirewall("postgres-fw",
     {
-        clusterId: redis.id,
+        clusterId: postgres.id,
         rules: [
             {
                 type: "k8s",
@@ -31,6 +31,6 @@ export const redisfw = new ocean.DatabaseFirewall("api-redis-fw",
         ]
     },
   {
-    dependsOn: redis
+    dependsOn: postgres
   }
 )

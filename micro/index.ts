@@ -2,7 +2,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as ocean from "@pulumi/digitalocean";
 import * as etcd from "../etcd";
-import * as cockroach from "../cockroach";
+import * as postgres from "../postgres";
 import * as crd from "../crd";
 import * as redis from "../redis"
 import { project, provider } from "../cluster";
@@ -265,7 +265,7 @@ function microDeployment(srv: string, port: number): k8s.apps.v1.Deployment {
     },
     {
       name: "MICRO_STORE_ADDRESS",
-      value: `postgresql://root@cockroach-cockroachdb-public.cockroach:26257?ssl=true&sslmode=require&sslrootcert=certs/store/ca.crt&sslkey=certs/store/tls.key&sslcert=certs/store/tls.crt`
+      value: postgres.postgres.uri
     }
   ];
 
@@ -388,11 +388,6 @@ function microDeployment(srv: string, port: number): k8s.apps.v1.Deployment {
                     name: "etcd-client-certs",
                     mountPath: "/certs/registry",
                     readOnly: true
-                  },
-                  {
-                    name: "cockroachdb-client-certs",
-                    mountPath: "/certs/store",
-                    readOnly: true
                   }
                 ]
               }
@@ -402,13 +397,6 @@ function microDeployment(srv: string, port: number): k8s.apps.v1.Deployment {
                 name: "etcd-client-certs",
                 secret: {
                   secretName: (etcd.clientTLS.spec as any).secretName
-                }
-              },
-              {
-                name: "cockroachdb-client-certs",
-                secret: {
-                  secretName: (cockroach.clientTLS.spec as any).secretName,
-                  defaultMode: 0o600
                 }
               }
             ]

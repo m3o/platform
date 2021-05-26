@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/micro/micro/plugin/postgres/v3"
+	"github.com/micro/micro/plugin/s3/v3"
 	"github.com/micro/micro/v3/profile"
 	"github.com/micro/micro/v3/service/auth"
 	"github.com/micro/micro/v3/service/auth/jwt"
@@ -24,12 +26,10 @@ import (
 	"github.com/urfave/cli/v2"
 
 	// plugins
-	"github.com/micro/micro/plugin/cockroach/v3"
 	"github.com/micro/micro/plugin/etcd/v3"
 	"github.com/micro/micro/plugin/prometheus/v3"
 	redisBroker "github.com/micro/micro/plugin/redis/broker/v3"
 	redisstream "github.com/micro/micro/plugin/redis/stream/v3"
-	"github.com/micro/micro/plugin/s3/v3"
 )
 
 func init() {
@@ -44,7 +44,7 @@ var Profile = &profile.Profile{
 		// the cockroach store will connect immediately so the address must be passed
 		// when the store is created. The cockroach store address contains the location
 		// of certs so it can't be defaulted like the broker and registry.
-		store.DefaultStore = cockroach.NewStore(store.Nodes(ctx.String("store_address")))
+		store.DefaultStore = postgres.NewStore(store.Nodes(ctx.String("store_address")))
 		config.DefaultConfig, _ = storeConfig.NewConfig(store.DefaultStore, "")
 		profile.SetupBroker(redisBroker.NewBroker(broker.Addrs(ctx.String("broker_address"))))
 		profile.SetupRegistry(etcd.NewRegistry(registry.Addrs(ctx.String("registry_address"))))

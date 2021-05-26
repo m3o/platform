@@ -1,14 +1,13 @@
 import "./certmanager";
 import "./cluster";
 import "./redis";
+import "./postgres";
 import "./micro";
 import "./etcd";
-import "./nats";
 import "./nginx";
 import "./timescale";
 import "./promscale";
 import "./prometheus";
-import "./cockroach";
 import "./monitoring";
 import "./promtail";
 import "./metabase";
