@@ -110,7 +110,7 @@ export const chart = new k8s.helm.v3.Chart(
       persistentVolumes: {
         data: {
           enabled: true,
-          size: "150Gi"
+          size: "250Gi"
         },
         wal: {
           enabled: true,

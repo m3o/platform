@@ -20,7 +20,7 @@ export const cluster = new ocean.KubernetesCluster("cluster", {
   version: conf.require("k8s_version"),
   nodePool: {
     maxNodes: 6,
-    minNodes: 2,
+    minNodes: 3,
     name: "default-pool",
     size: conf.get("node_slug") || "s-8vcpu-16gb" as any,
     autoScale: true,
