@@ -704,6 +704,12 @@ export const proxyService = new k8s.core.v1.Service(
   { provider, dependsOn: proxyDeployment }
 );
 
+export const pr = new ocean.ProjectResources("pr-micro", {
+  project: project.id,
+  resources: [storeBucket.bucketUrn, runtimeBucket.bucketUrn]
+})
+
+
 export default [
   microNamespace,
   serverNamespace,

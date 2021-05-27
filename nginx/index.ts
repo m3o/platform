@@ -237,6 +237,12 @@ export const httpIngress = new k8s.networking.v1beta1.Ingress(
   { provider, dependsOn: [externalChart, apiService] }
 );
 
+export const pr = new ocean.ProjectResources("pr-nginx", {
+  project: project.id,
+  resources: [externalIP.floatingIpUrn]
+})
+
+
 export default [
   internalChart,
   externalChart,

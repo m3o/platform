@@ -34,3 +34,8 @@ export const postgresfw = new ocean.DatabaseFirewall("postgres-fw",
     dependsOn: postgres
   }
 )
+
+export const pr = new ocean.ProjectResources("pr-postgres", {
+  project: project.id,
+  resources: [postgres.clusterUrn]
+})

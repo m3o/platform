@@ -19,24 +19,16 @@ export const cluster = new ocean.KubernetesCluster("cluster", {
   region: conf.require("region") as ocean.Region,
   version: conf.require("k8s_version"),
   nodePool: {
-    nodeCount: 1,
+    maxNodes: 6,
+    minNodes: 2,
     name: "default-pool",
-    size: "s-1vcpu-2gb",
+    size: conf.get("node_slug") || "s-8vcpu-16gb" as any,
+    autoScale: true,
   },
   vpcUuid: vpc.id,
 },{
   parent: project,
 });
-
-export const nodePool = new ocean.KubernetesNodePool("node-pool", {
-  name: "micro",
-  clusterId: cluster.id,
-  size: conf.get("node_slug") || "s-8vcpu-16gb" as any,
-  minNodes: 2,
-  maxNodes: 6,
-  autoScale: true,
-});
-
 
 // The DigitalOcean Kubernetes cluster periodically gets a new certificate,
 // so we look up the cluster by name and get the current kubeconfig after
@@ -53,13 +45,17 @@ export const kubeconfig = cluster.status.apply(status => {
 
 export const provider = new k8s.Provider("k8s-provider",
   { kubeconfig },
-  { dependsOn: [cluster, nodePool] },
+  { dependsOn: [cluster] },
 );
+
+export const pr = new ocean.ProjectResources("pr-cluster", {
+  project: project.id,
+  resources: [cluster.id.apply(id => "do:kubernetes:"+id)]
+})
 
 export default [
   vpc,
   cluster,
   kubeconfig,
   provider,
-  nodePool,
 ]

@@ -34,3 +34,8 @@ export const redisfw = new ocean.DatabaseFirewall("api-redis-fw",
     dependsOn: redis
   }
 )
+
+export const pr = new ocean.ProjectResources("pr-redis", {
+  project: project.id,
+  resources: [redis.clusterUrn]
+})
