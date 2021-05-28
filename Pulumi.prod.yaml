@@ -2,7 +2,7 @@ config:
   digitalocean:env: production
   digitalocean:k8s_version: 1.19.6-do.0
   digitalocean:name: prod
-  digitalocean:node_slug: g-2vcpu-8gb
+  digitalocean:node_slug: s-8vcpu-16gb
   digitalocean:region: lon1
   digitalocean:spacesAccessId:
     secure: AAABAFyJS8wmvA3HipBD78cyHzmB2HbIGx4VqhnziAKYC9M3LTWoxifkgYemVE64hofgvw==

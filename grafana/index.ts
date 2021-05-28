@@ -22,6 +22,24 @@ export const database = new K8SExec(
   { dependsOn: timescale }
 );
 
+export const dataRetention = new K8SExec(
+  "grafana-retention",
+  {
+    namespace: tsNamespace.metadata.name,
+    podSelector: "role=master",
+    container: "timescaledb",
+    kubeConfig: kubeconfig,
+    cmd: [
+      "psql",
+      "-d grafana",
+      "-c",
+      `SELECT set_default_retention_period(10 * INTERVAL '1 day')`
+    ]
+  },
+  { dependsOn: timescale }
+);
+
+
 export const dbUser = new K8SExec(
   "grafana-user",
   {

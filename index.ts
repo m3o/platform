@@ -9,8 +9,5 @@ import "./timescale";
 import "./promscale";
 import "./prometheus";
 import "./monitoring";
-import "./promtail";
-import "./metabase";
 import "./grafana";
-import "./loki";
 import "./kata";

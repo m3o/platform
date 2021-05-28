@@ -15,19 +15,30 @@ export const vpc = new ocean.Vpc("vpc", {
   parent: project,
 });
 
+// We create a cluster with a pool of size 1 and with a small size. The real worker nodes are in the node-pool in the next
+// resource. We do this because you can't change the node size in an existing pool, you can only create a new one
+// so if you ever want to size up all the nodes in a pool you can add a new nodepool of larger size, run pulumi up,
+// then delete the unwanted pool
 export const cluster = new ocean.KubernetesCluster("cluster", {
   region: conf.require("region") as ocean.Region,
   version: conf.require("k8s_version"),
   nodePool: {
-    maxNodes: 6,
-    minNodes: 3,
+    nodeCount: 1,
     name: "default-pool",
-    size: conf.get("node_slug") || "s-8vcpu-16gb" as any,
-    autoScale: true,
+    size: "g-2vcpu-8gb" as any,
   },
   vpcUuid: vpc.id,
 },{
   parent: project,
+});
+
+export const nodePool = new ocean.KubernetesNodePool("node-pool", {
+  name: "micro",
+  clusterId: cluster.id,
+  size: conf.get("node_slug") || "s-8vcpu-16gb" as any,
+  minNodes: 2,
+  maxNodes: 6,
+  autoScale: true,
 });
 
 // The DigitalOcean Kubernetes cluster periodically gets a new certificate,

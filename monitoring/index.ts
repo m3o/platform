@@ -24,6 +24,23 @@ export const database = new K8SExec(
   { dependsOn: ts }
 );
 
+export const dataRetention = new K8SExec(
+  "analytics-retention",
+  {
+    namespace: tsNamespace.metadata.name,
+    podSelector: "role=master",
+    container: "timescaledb",
+    kubeConfig: kubeconfig,
+    cmd: [
+      "psql",
+      "-d analytics",
+      "-c",
+      `SELECT set_default_retention_period(10 * INTERVAL '1 day')`
+    ]
+  },
+  { dependsOn: ts }
+);
+
 export const dbUser = new K8SExec(
   "analytics-user",
   {
