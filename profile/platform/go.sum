@@ -290,8 +290,8 @@ github.com/micro/micro/plugin/prometheus/v3 v3.0.0-20201217215412-2f7ad18595ff h
 github.com/micro/micro/plugin/prometheus/v3 v3.0.0-20201217215412-2f7ad18595ff/go.mod h1:WHp5Bi/PJKyFbo2WTO1RGGxK6UDQDoVi83/o4tGey1Q=
 github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210525210058-c1705b93384b h1:maA6WSyiLn73/kPzqQUCGOb9gtoG0shHz56doyFoPFE=
 github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210525210058-c1705b93384b/go.mod h1:unH4LeKDEv1W0A/IdGsb09dEpImoaZYeUc/iHSEzGjc=
-github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210525210058-c1705b93384b h1:YAi6VVSOiyQiiUA2XBOLCfGN83wfU/OUk83h5mRBygk=
-github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210525210058-c1705b93384b/go.mod h1:h5AGqnxZjVQIY6A+MJsgyRWS7q4w42xdFquLNVSaQLU=
+github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210602103225-8c5dc10dc027 h1:TLaUvV02ja9MREIK15vqzwwK3hNDOjkkOD1Dc0KTMXI=
+github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210602103225-8c5dc10dc027/go.mod h1:h5AGqnxZjVQIY6A+MJsgyRWS7q4w42xdFquLNVSaQLU=
 github.com/micro/micro/plugin/s3/v3 v3.0.0-20210520160722-49fbecbd098d h1:MWy0olZG7lbtmI5fX9okqrmj7xV2f2bcJNcGeBtXGpo=
 github.com/micro/micro/plugin/s3/v3 v3.0.0-20210520160722-49fbecbd098d/go.mod h1:5Ozlxb7UZxZGCgUabgl1zoPZRD998B5UssTGhaz7Ifg=
 github.com/micro/micro/v3 v3.0.4 h1:GupR5YoV0A7hn6C9taD49voZyTyVQT/ihqtGDg867c0=
