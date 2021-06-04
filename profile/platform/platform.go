@@ -96,7 +96,7 @@ var Profile = &profile.Profile{
 		}
 		openTracer, _, err := jaeger.New(
 			opentelemetry.WithServiceName(tracingServiceName),
-			opentelemetry.WithTraceReporterAddress("jaeger:6831"),
+			opentelemetry.WithTraceReporterAddress("jaeger-agent:6831"),
 		)
 		if err != nil {
 			logger.Fatalf("Error configuring opentracing: %v", err)
