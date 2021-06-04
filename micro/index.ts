@@ -9,7 +9,7 @@ import { project, provider } from "../cluster";
 import { ObjectMeta } from "../crd/meta/v1";
 import { Output } from "@pulumi/pulumi";
 
-const image = "ghcr.io/m3o/platform:latest";
+const image = "ghcr.io/m3o/platform:202106031410528fb1bf";
 const imagePullPolicy = "Always";
 const replicas = 2;
 
@@ -702,6 +702,253 @@ export const proxyService = new k8s.core.v1.Service(
     }
   },
   { provider, dependsOn: proxyDeployment }
+);
+
+
+export const jaegerDeployment = new k8s.apps.v1.Deployment(
+  "micro-jaeger-deployment",
+  {
+    metadata: {
+      name: "jaeger",
+      namespace: "server",
+      labels: {
+        app: "jaeger",
+        "app.kubernetes.io/name": "jaeger",
+        "app.kubernetes.io/component": "all-in-one",
+      }
+    },
+    spec: {
+      replicas: 1,
+      selector: {
+        matchLabels: {
+          app: "jaeger",
+          "app.kubernetes.io/name": "jaeger",
+          "app.kubernetes.io/component": "all-in-one",
+        },
+      },
+      strategy: {
+        type: "Recreate",
+      },
+
+     template: {
+        metadata: {
+          labels: {
+            app: "jaeger",
+            "app.kubernetes.io/name": "jaeger",
+            "app.kubernetes.io/component": "all-in-one",
+          },
+          annotations: {
+            "prometheus.io/scrape": "true",
+            "prometheus.io/port": "16686"
+          },
+        },
+
+       spec: {
+          containers: [
+            {
+              name: "jaeger",
+              env: [
+                {
+                  name: "COLLECTOR_ZIPKIN_HTTP_PORT",
+                  value: "9411"
+                },
+              ],
+              image: "jaegertracing/all-in-one",
+              imagePullPolicy,
+              ports: [
+                {
+                  containerPort: 5775,
+                  protocol: "UDP"
+                },
+                {
+                  containerPort: 6831,
+                  protocol: "UDP"
+                },
+                {
+                  containerPort: 6832,
+                  protocol: "UDP"
+                },
+                {
+                  containerPort: 5778,
+                  protocol: "TCP"
+                },
+                {
+                  containerPort: 16686,
+                  protocol: "TCP"
+                },
+                {
+                  containerPort: 9411,
+                  protocol: "TCP"
+                },
+              ],
+              readinessProbe: {
+                httpGet: {
+                  path: "/",
+                  port: 14269
+                },
+                initialDelaySeconds: 5,
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  { provider }
+);
+
+export const jaegerQueryService = new k8s.core.v1.Service(
+  "jaeger-query",
+  {
+    metadata: {
+      name: "jaeger-query",
+      namespace: "server",
+      labels: {
+        app: "jaeger",
+        "app.kubernetes.io/name": "jaeger",
+        "app.kubernetes.io/component": "query",
+      }
+    },
+    spec: {
+      ports: [
+        {
+          name: "query-http",
+          port: 80,
+          protocol: "TCP",
+          targetPort: 16686
+        }
+      ],
+      selector: {
+        "app.kubernetes.io/name": "jaeger",
+        "app.kubernetes.io/component": "all-in-one"
+      },
+      type: "LoadBalancer"
+    }
+  },
+  { provider, dependsOn: jaegerDeployment }
+);
+
+export const jaegerQueryCollector = new k8s.core.v1.Service(
+  "jaeger-collector",
+  {
+    metadata: {
+      name: "jaeger-collector",
+      namespace: "server",
+      labels: {
+        app: "jaeger",
+        "app.kubernetes.io/name": "jaeger",
+        "app.kubernetes.io/component": "collector",
+      }
+    },
+    spec: {
+      ports: [
+        {
+          name: "jaeger-collector-tchannel",
+          port: 14267,
+          protocol: "TCP",
+          targetPort: 14267
+        },
+        {
+          name: "jaeger-collector-http",
+          port: 14268,
+          protocol: "TCP",
+          targetPort: 14268
+        },
+        {
+          name: "jaeger-collector-zipkin",
+          port: 9411,
+          protocol: "TCP",
+          targetPort: 9411
+        },
+      ],
+      selector: {
+        "app.kubernetes.io/name": "jaeger",
+        "app.kubernetes.io/component": "all-in-one"
+      },
+      type: "ClusterIP"
+    }
+  },
+  { provider, dependsOn: jaegerDeployment }
+);
+
+export const jaegerAgent = new k8s.core.v1.Service(
+  "jaeger-agent",
+  {
+    metadata: {
+      name: "jaeger-agent",
+      namespace: "server",
+      labels: {
+        app: "jaeger",
+        "app.kubernetes.io/name": "jaeger",
+        "app.kubernetes.io/component": "agent",
+      }
+    },
+    spec: {
+      ports: [
+        {
+          name: "agent-zipkin-thrift",
+          port: 5775,
+          protocol: "UDP",
+          targetPort: 5775
+        },
+        {
+          name: "agent-compact",
+          port: 6831,
+          protocol: "UDP",
+          targetPort: 6831
+        },
+        {
+          name: "agent-binary",
+          port: 6832,
+          protocol: "UDP",
+          targetPort: 6832
+        },
+        {
+          name: "agent-configs",
+          port: 5778,
+          protocol: "TCP",
+          targetPort: 5778
+        },
+      ],
+      clusterIP: "None",
+      selector: {
+        "app.kubernetes.io/name": "jaeger",
+        "app.kubernetes.io/component": "all-in-one"
+      },
+    }
+  },
+  { provider, dependsOn: jaegerDeployment }
+);
+
+export const zipkin = new k8s.core.v1.Service(
+  "zipkin",
+  {
+    metadata: {
+      name: "zipkin",
+      namespace: "server",
+      labels: {
+        app: "jaeger",
+        "app.kubernetes.io/name": "jaeger",
+        "app.kubernetes.io/component": "zipkin",
+      }
+    },
+    spec: {
+      ports: [
+        {
+          name: "jaeger-collector-zipkin",
+          port: 9411,
+          protocol: "TCP",
+          targetPort: 9411
+        },
+      ],
+      clusterIP: "None",
+      selector: {
+        "app.kubernetes.io/name": "jaeger",
+        "app.kubernetes.io/component": "all-in-one"
+      },
+    }
+  },
+  { provider, dependsOn: jaegerDeployment }
 );
 
 export const pr = new ocean.ProjectResources("pr-micro", {
