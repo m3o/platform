@@ -294,10 +294,14 @@ github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210525210058-c1705b93384b
 github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210525210058-c1705b93384b/go.mod h1:unH4LeKDEv1W0A/IdGsb09dEpImoaZYeUc/iHSEzGjc=
 github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210607130502-d92d8f00160e h1:xLgxYtsQrh9NWUX3eKO18J5RTReL+A353KqzpkGVxUw=
 github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210607130502-d92d8f00160e/go.mod h1:1ZugcUk51zdziTVH3r7ccnFvrwPiiXIt9tLzMHqHzcY=
+github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210607154842-ec8964031a93 h1:Hyhg2n+MsyZuHwQqMJg5MJHhoh4iUpHSC6D4N4OYkGM=
+github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210607154842-ec8964031a93/go.mod h1:1ZugcUk51zdziTVH3r7ccnFvrwPiiXIt9tLzMHqHzcY=
 github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210603140029-a55397bc4d3d h1:fKOEl9ML3I7w+7m5MDu914tpuKbSve7oa+wW3/EjYvc=
 github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210603140029-a55397bc4d3d/go.mod h1:qcVdo14ZYDwimjds7kk0sqLCow2Yo0/Xkrwl+buxp5Y=
 github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210607130502-d92d8f00160e h1:qsDAe4i5ZAAB4Dw9lp+a+vtCFphvm3h4azbDKpbBG5k=
 github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210607130502-d92d8f00160e/go.mod h1:NfyCGMmgT+IUsMh6ZMnglFvRmdQtIGSZC/mq3t35S6Q=
+github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210607154842-ec8964031a93 h1:sVG10r1W/bIkdSmII+A12vHZrc+TsDt22GjdBF1tiJU=
+github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210607154842-ec8964031a93/go.mod h1:NfyCGMmgT+IUsMh6ZMnglFvRmdQtIGSZC/mq3t35S6Q=
 github.com/micro/micro/plugin/s3/v3 v3.0.0-20210520160722-49fbecbd098d h1:MWy0olZG7lbtmI5fX9okqrmj7xV2f2bcJNcGeBtXGpo=
 github.com/micro/micro/plugin/s3/v3 v3.0.0-20210520160722-49fbecbd098d/go.mod h1:5Ozlxb7UZxZGCgUabgl1zoPZRD998B5UssTGhaz7Ifg=
 github.com/micro/micro/v3 v3.0.4 h1:GupR5YoV0A7hn6C9taD49voZyTyVQT/ihqtGDg867c0=
