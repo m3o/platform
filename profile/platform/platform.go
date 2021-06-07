@@ -60,10 +60,12 @@ var Profile = &profile.Profile{
 			metrics.SetDefaultMetricsReporter(prometheusReporter)
 		}
 
-		var err error
-		events.DefaultStream, err = redisstream.NewStream(redisStreamOpts(ctx)...)
-		if err != nil {
-			logger.Fatalf("Error configuring stream: %v", err)
+		if ctx.Args().Get(1) == "events" {
+			var err error
+			events.DefaultStream, err = redisstream.NewStream(redisStreamOpts(ctx)...)
+			if err != nil {
+				logger.Fatalf("Error configuring stream: %v", err)
+			}
 		}
 
 		// only configure the blob store for the store and runtime services
