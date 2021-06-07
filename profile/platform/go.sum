@@ -290,10 +290,10 @@ github.com/micro/micro/plugin/postgres/v3 v3.0.0-20210526124831-f6d0c7a4730c h1:
 github.com/micro/micro/plugin/postgres/v3 v3.0.0-20210526124831-f6d0c7a4730c/go.mod h1:xx/UW5gji91EHNCrtDU2yseWm3hjG0+xlhfriU1IsFk=
 github.com/micro/micro/plugin/prometheus/v3 v3.0.0-20201217215412-2f7ad18595ff h1:PvLSWPb++sc1W2ooEWGmVHgqgDA8N8ObtLlbdSfSsjc=
 github.com/micro/micro/plugin/prometheus/v3 v3.0.0-20201217215412-2f7ad18595ff/go.mod h1:WHp5Bi/PJKyFbo2WTO1RGGxK6UDQDoVi83/o4tGey1Q=
-github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210607151919-f5182646c5c6 h1:LjDcTPjm3qAAMGUevopg+nWZ5c+VGx3IEa42+VxMZbw=
-github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210607151919-f5182646c5c6/go.mod h1:1ZugcUk51zdziTVH3r7ccnFvrwPiiXIt9tLzMHqHzcY=
-github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210607151919-f5182646c5c6 h1:Pyiy1UEYiMafhQ0uwN2htGB/YV6sPr9gigBUfjvpJ8k=
-github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210607151919-f5182646c5c6/go.mod h1:NfyCGMmgT+IUsMh6ZMnglFvRmdQtIGSZC/mq3t35S6Q=
+github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210607154842-ec8964031a93 h1:Hyhg2n+MsyZuHwQqMJg5MJHhoh4iUpHSC6D4N4OYkGM=
+github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210607154842-ec8964031a93/go.mod h1:1ZugcUk51zdziTVH3r7ccnFvrwPiiXIt9tLzMHqHzcY=
+github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210607154842-ec8964031a93 h1:sVG10r1W/bIkdSmII+A12vHZrc+TsDt22GjdBF1tiJU=
+github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210607154842-ec8964031a93/go.mod h1:NfyCGMmgT+IUsMh6ZMnglFvRmdQtIGSZC/mq3t35S6Q=
 github.com/micro/micro/plugin/s3/v3 v3.0.0-20210520160722-49fbecbd098d h1:MWy0olZG7lbtmI5fX9okqrmj7xV2f2bcJNcGeBtXGpo=
 github.com/micro/micro/plugin/s3/v3 v3.0.0-20210520160722-49fbecbd098d/go.mod h1:5Ozlxb7UZxZGCgUabgl1zoPZRD998B5UssTGhaz7Ifg=
 github.com/micro/micro/v3 v3.0.4 h1:GupR5YoV0A7hn6C9taD49voZyTyVQT/ihqtGDg867c0=
