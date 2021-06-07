@@ -60,8 +60,8 @@ var Profile = &profile.Profile{
 			metrics.SetDefaultMetricsReporter(prometheusReporter)
 		}
 
+		var err error
 		if ctx.Args().Get(1) == "events" {
-			var err error
 			events.DefaultStream, err = redisstream.NewStream(redisStreamOpts(ctx)...)
 			if err != nil {
 				logger.Fatalf("Error configuring stream: %v", err)
