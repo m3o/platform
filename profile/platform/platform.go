@@ -13,6 +13,7 @@ import (
 	"github.com/micro/micro/v3/service/broker"
 	microBuilder "github.com/micro/micro/v3/service/build"
 	"github.com/micro/micro/v3/service/build/golang"
+	"github.com/micro/micro/v3/service/client"
 	"github.com/micro/micro/v3/service/config"
 	storeConfig "github.com/micro/micro/v3/service/config/store"
 	"github.com/micro/micro/v3/service/events"
@@ -20,6 +21,8 @@ import (
 	"github.com/micro/micro/v3/service/logger"
 	"github.com/micro/micro/v3/service/metrics"
 	"github.com/micro/micro/v3/service/registry"
+	"github.com/micro/micro/v3/service/router"
+	k8sRouter "github.com/micro/micro/v3/service/router/kubernetes"
 	microRuntime "github.com/micro/micro/v3/service/runtime"
 	"github.com/micro/micro/v3/service/runtime/kubernetes"
 	"github.com/micro/micro/v3/service/store"
@@ -68,6 +71,9 @@ var Profile = &profile.Profile{
 			}
 		}
 
+		// set the events store's internal store
+		events.DefaultStore = evStore.NewStore(evStore.WithStore(store.DefaultStore))
+
 		// only configure the blob store for the store and runtime services
 		if ctx.Args().Get(1) == "runtime" || ctx.Args().Get(1) == "store" {
 			opts := []s3.Option{
@@ -89,15 +95,22 @@ var Profile = &profile.Profile{
 			}
 		}
 
+		// The platform runs on k8s with kata containers
 		microRuntime.DefaultRuntime = kubernetes.NewRuntime(
 			kubernetes.RuntimeClassName("kata-fc"),
 		)
+
+		// Build from source within the runtime
+		// TODO: offload to a build service and run containers
 		microBuilder.DefaultBuilder, err = golang.NewBuilder()
 		if err != nil {
 			logger.Fatalf("Error configuring golang builder: %v", err)
 		}
-		events.DefaultStore = evStore.NewStore(evStore.WithStore(store.DefaultStore))
+		// Use k8s routing which is DNS based
+		router.DefaultRouter = k8sRouter.NewRouter()
+		client.DefaultClient.Init(client.Router(router.DefaultRouter))
 
+		// default images run our own cell by default
 		kubernetes.DefaultImage = "ghcr.io/m3o/cells:v3"
 		return nil
 	},

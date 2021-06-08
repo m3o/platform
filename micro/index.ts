@@ -44,7 +44,7 @@ export const jwtCert = new crd.certmanager.v1.Certificate(
   {
     metadata: {
       name: "jwt-creds",
-      namespace: "server"
+      namespace: "micro"
     },
     spec: {
       duration: "87600h", // 10 years
@@ -91,7 +91,7 @@ export const runtimeServiceAccount = new k8s.core.v1.ServiceAccount(
   "micro-runtime-sa",
   {
     metadata: {
-      namespace: "server"
+      namespace: "micro"
     }
   },
   { provider }
@@ -161,7 +161,7 @@ export const runtimeClusterRoleBinding = new k8s.rbac.v1.ClusterRoleBinding(
       {
         kind: "ServiceAccount",
         name: runtimeServiceAccount.metadata.name,
-        namespace: "server"
+        namespace: "micro"
       }
     ],
     roleRef: {
@@ -178,7 +178,7 @@ export const runtimeRoleBinding = new k8s.rbac.v1.RoleBinding(
   {
     metadata: {
       name: "micro-runtime",
-      namespace: "server"
+      namespace: "micro"
     },
     roleRef: {
       apiGroup: "rbac.authorization.k8s.io",
@@ -201,7 +201,7 @@ export const spacesSecret = new k8s.core.v1.Secret(
   {
     metadata: {
       name: "do-spaces",
-      namespace: "server"
+      namespace: "micro"
     },
     stringData: {
       accessId: conf.require("spacesAccessId"),
@@ -322,7 +322,7 @@ function microDeployment(srv: string, port: number): k8s.apps.v1.Deployment {
     {
       metadata: {
         name: `micro-${srv}`,
-        namespace: "server",
+        namespace: "micro",
         labels: {
           name: srv,
           version: "latest",
@@ -414,7 +414,7 @@ export const networkService = new k8s.core.v1.Service(
   {
     metadata: {
       name: "micro-network",
-      namespace: "server",
+      namespace: "micro",
       labels: {
         name: "network",
         version: "latest",
@@ -463,7 +463,7 @@ export const apiDeployment = new k8s.apps.v1.Deployment(
   {
     metadata: {
       name: "micro-api",
-      namespace: "server",
+      namespace: "micro",
       labels: {
         name: "api",
         version: "latest",
@@ -558,7 +558,7 @@ export const apiService = new k8s.core.v1.Service(
   {
     metadata: {
       name: "micro-api",
-      namespace: "server",
+      namespace: "micro",
       labels: {
         name: "api",
         version: "latest",
@@ -588,7 +588,7 @@ export const proxyDeployment = new k8s.apps.v1.Deployment(
   {
     metadata: {
       name: "micro-proxy",
-      namespace: "server",
+      namespace: "micro",
       labels: {
         name: "proxy",
         version: "latest",
@@ -679,7 +679,7 @@ export const proxyService = new k8s.core.v1.Service(
   {
     metadata: {
       name: "micro-proxy",
-      namespace: "server",
+      namespace: "micro",
       labels: {
         name: "proxy",
         version: "latest",
