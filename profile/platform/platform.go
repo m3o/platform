@@ -13,8 +13,6 @@ import (
 	"github.com/micro/micro/v3/service/broker"
 	microBuilder "github.com/micro/micro/v3/service/build"
 	"github.com/micro/micro/v3/service/build/golang"
-	"github.com/micro/micro/v3/service/config"
-	storeConfig "github.com/micro/micro/v3/service/config/store"
 	"github.com/micro/micro/v3/service/events"
 	evStore "github.com/micro/micro/v3/service/events/store"
 	"github.com/micro/micro/v3/service/logger"
@@ -47,7 +45,6 @@ var Profile = &profile.Profile{
 		// when the store is created. The cockroach store address contains the location
 		// of certs so it can't be defaulted like the broker and registry.
 		store.DefaultStore = postgres.NewStore(store.Nodes(ctx.String("store_address")))
-		config.DefaultConfig, _ = storeConfig.NewConfig(store.DefaultStore, "")
 		profile.SetupBroker(redisBroker.NewBroker(broker.Addrs(ctx.String("broker_address"))))
 		profile.SetupRegistry(etcd.NewRegistry(registry.Addrs(ctx.String("registry_address"))))
 		profile.SetupJWT(ctx)
