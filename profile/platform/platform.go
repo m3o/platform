@@ -23,6 +23,7 @@ import (
 	"github.com/micro/micro/v3/service/store"
 	"github.com/micro/micro/v3/util/opentelemetry"
 	"github.com/micro/micro/v3/util/opentelemetry/jaeger"
+	"github.com/opentracing/opentracing-go"
 	"github.com/urfave/cli/v2"
 
 	// plugins
@@ -88,6 +89,10 @@ var Profile = &profile.Profile{
 			}
 		}
 
+		reporterAddress := os.Getenv("MICRO_TRACING_REPORTER_ADDRESS")
+		if len(reporterAddress) == 0 {
+			reporterAddress = jaeger.DefaultReporterAddress
+		}
 		// Configure tracing with Jaeger:
 		tracingServiceName := ctx.Args().Get(1)
 		if len(tracingServiceName) == 0 {
@@ -95,12 +100,13 @@ var Profile = &profile.Profile{
 		}
 		openTracer, _, err := jaeger.New(
 			opentelemetry.WithServiceName(tracingServiceName),
-			opentelemetry.WithTraceReporterAddress("jaeger-agent:6831"),
+			opentelemetry.WithTraceReporterAddress(reporterAddress),
 		)
 		if err != nil {
 			logger.Fatalf("Error configuring opentracing: %v", err)
 		}
 		opentelemetry.DefaultOpenTracer = openTracer
+		opentracing.SetGlobalTracer(openTracer)
 
 		microRuntime.DefaultRuntime = kubernetes.NewRuntime(
 			kubernetes.RuntimeClassName("kata-fc"),

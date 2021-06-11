@@ -26,6 +26,13 @@ export const cluster = new ocean.KubernetesCluster("cluster", {
     nodeCount: 1,
     name: "default-pool",
     size: "g-2vcpu-8gb" as any,
+    taints: [
+      {
+        effect: "NoSchedule",
+        key: "priority",
+        value: "low"
+      }
+    ],
   },
   vpcUuid: vpc.id,
 },{
