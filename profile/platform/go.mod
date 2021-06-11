@@ -12,8 +12,8 @@ require (
 	github.com/micro/micro/plugin/redis/broker/v3 v3.0.0-20210607154842-ec8964031a93
 	github.com/micro/micro/plugin/redis/stream/v3 v3.0.0-20210607154842-ec8964031a93
 	github.com/micro/micro/plugin/s3/v3 v3.0.0-20210520160722-49fbecbd098d
-	github.com/micro/micro/v3 v3.2.2-0.20210609132645-154ae8d45e32
-	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/micro/micro/v3 v3.3.1-0.20210611161948-fd9821dd4f52
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/procfs v0.2.0 // indirect
 	github.com/uber/jaeger-client-go v2.29.1+incompatible // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
