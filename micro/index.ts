@@ -266,6 +266,10 @@ function microDeployment(srv: string, port: number): k8s.apps.v1.Deployment {
     {
       name: "MICRO_STORE_ADDRESS",
       value: postgres.postgres.uri
+    },
+    {
+      name: "MICRO_TRACING_REPORTER_ADDRESS",
+      value: "jaeger-agent.server:6831"
     }
   ];
 
