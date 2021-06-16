@@ -13,6 +13,10 @@ config:
   gcp:project:
     secure: AAABACoNJa0ZG0vb18YFJEqLI5l3yd6hh5jymS+ZLsCcA1dqEGDav8Uaig==
   gcp:region: europe-west2
+  gcp:s3_access_key:
+    secure: AAABADAOMQH8Nv7SZNHmOYuAy6hNslxNJlaqjueW+lxTan3d+hAQ6U+B7CPIdZxI2GZXZZCu/as=
+  gcp:s3_secret_key:
+    secure: AAABAKAUb++ZuXHU/ReU8FFbnEQkiRFwQYzsvZPo8WFyaTntyfNYeW7TdhhiVm/J7nU6oPBVrLE8bksh9aKAPrWzrSDHHpdp
   m3o:analytics_db_password:
     secure: AAABANWpgWi/6n7WoYUrYtCEFrcQiqe2UM0elqz2+kQMB1ZA89NawiKY2UCZSh2ZEJ9ttiP5S480JN59QzIhSg==
   m3o:api-hosts: api.m3o.com,*.m3o.dev
