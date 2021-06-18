@@ -63,7 +63,7 @@ export const backupCron = new k8s.batch.v2alpha1.CronJob("postgresBackup", {
                 env: [
                   {
                     name: "MICRO_S3_BACKUP_BUCKET",
-                    value: TODO
+                    value: bucket.name
                   },
                   {
                     name: "MICRO_S3_ACCESS_KEY",
@@ -79,7 +79,7 @@ export const backupCron = new k8s.batch.v2alpha1.CronJob("postgresBackup", {
                   },
                   {
                     name: "MICRO_POSTGRES_POST",
-                    value: postgres.port
+                    value: String(postgres.port)
                   },
                   {
                     name: "MICRO_POSTGRES_USER",

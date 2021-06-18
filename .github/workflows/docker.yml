@@ -20,4 +20,18 @@ jobs:
           workdir: postgres
           snapshot: true
           registry: ghcr.io
+  build-redis-backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Check out repository
+      - uses: elgohr/Publish-Docker-Github-Action@2.18
+        name: Build and Push Docker Images
+        with:
+          name: m3o/redis-backup
+          username: ${{ secrets.GHCR_ACTOR }}
+          password: ${{ secrets.GHCR_PAT }}
+          workdir: redis
+          snapshot: true
+          registry: ghcr.io
 
