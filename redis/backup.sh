@@ -11,7 +11,7 @@ secretKey=$MICRO_S3_SECRET_KEY
 
 redisURI=$MICRO_REDIS_URI
 
-./rump -from "$redisURI" -to dump.rump
+/rump -from "$redisURI" -to dump.rump
 
 tar -czf $now.tar.gz dump.rump
 s3cmd put "$now.tar.gz" "$destination" --access_key "$accessKey" --secret_key "$secretKey" --host "storage.googleapis.com" --host-bucket "$bucket"
