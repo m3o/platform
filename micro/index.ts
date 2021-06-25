@@ -222,6 +222,10 @@ function microDeployment(srv: string, port: number): k8s.apps.v1.Deployment {
       value: "platform"
     },
     {
+      name: "MICRO_API_RESOLVER",
+      value: "subdomain"
+    },
+    {
       name: "MICRO_AUTH_PUBLIC_KEY",
       valueFrom: {
         secretKeyRef: {
@@ -271,50 +275,37 @@ function microDeployment(srv: string, port: number): k8s.apps.v1.Deployment {
       name: "MICRO_TRACING_REPORTER_ADDRESS",
       value: "jaeger-agent.server:6831"
     }
-  ];
-
-  if (srv === "runtime" || srv === "store") {
-    env.push(
-      {
-        name: "MICRO_BLOB_STORE_REGION",
-        value: "ams3"
-      },
-      {
-        name: "MICRO_BLOB_STORE_ENDPOINT",
-        value: "ams3.digitaloceanspaces.com"
-      },
-      {
-        name: "MICRO_BLOB_STORE_BUCKET",
-        value: srv === "runtime" ? runtimeBucket.name : storeBucket.name
-      },
-      {
-        name: "MICRO_BLOB_STORE_ACCESS_KEY",
-        valueFrom: {
-          secretKeyRef: {
-            name: spacesSecret.metadata.name,
-            key: "accessId"
-          }
-        }
-      },
-      {
-        name: "MICRO_BLOB_STORE_SECRET_KEY",
-        valueFrom: {
-          secretKeyRef: {
-            name: spacesSecret.metadata.name,
-            key: "secretKey"
-          }
+    {
+      name: "MICRO_BLOB_STORE_REGION",
+      value: "ams3"
+    },
+    {
+      name: "MICRO_BLOB_STORE_ENDPOINT",
+      value: "ams3.digitaloceanspaces.com"
+    },
+    {
+      name: "MICRO_BLOB_STORE_BUCKET",
+      value: srv === "runtime" ? runtimeBucket.name : storeBucket.name
+    },
+    {
+      name: "MICRO_BLOB_STORE_ACCESS_KEY",
+      valueFrom: {
+        secretKeyRef: {
+          name: spacesSecret.metadata.name,
+          key: "accessId"
         }
       }
-    );
-  }
-
-  if (srv !== "network") {
-    // use the network as the proxy
-    env.push({
-      name: "MICRO_PROXY",
-      value: pulumi.interpolate`${networkService.metadata.name}.${networkService.metadata.namespace}:${networkService.spec.ports[0].port}`
-    });
-  }
+    },
+    {
+      name: "MICRO_BLOB_STORE_SECRET_KEY",
+      valueFrom: {
+        secretKeyRef: {
+          name: spacesSecret.metadata.name,
+          key: "secretKey"
+        }
+      }
+    }
+  ];
 
   let serviceAccount: Output<string> | string = "default";
   if (srv === "runtime") {
@@ -443,119 +434,28 @@ export const networkService = new k8s.core.v1.Service(
   { provider, dependsOn: networkDeployment }
 );
 
+export const apiDeployment = microDeployment("auth", 8080);
 export const authDeployment = microDeployment("auth", 8010);
 export const brokerDeployment = microDeployment("broker", 8003);
 export const configDeployment = microDeployment("config", 8081);
 export const eventsDeployment = microDeployment("events", 8080);
+export const proxyDeployment = microDeployment("proxy", 8081);
 export const registryDeployment = microDeployment("registry", 8000);
 export const runtimeDeployment = microDeployment("runtime", 8088);
 export const storeDeployment = microDeployment("store", 8002);
 
 const server = [
+  apiDeployment,
   authDeployment,
   brokerDeployment,
   configDeployment,
   eventsDeployment,
   networkDeployment,
+  proxyDeployment,
   registryDeployment,
   runtimeDeployment,
   storeDeployment
 ];
-
-export const apiDeployment = new k8s.apps.v1.Deployment(
-  "micro-api-deployment",
-  {
-    metadata: {
-      name: "micro-api",
-      namespace: "server",
-      labels: {
-        name: "api",
-        version: "latest",
-        micro: "server"
-      }
-    },
-    spec: {
-      replicas,
-      selector: {
-        matchLabels: {
-          name: "api",
-          version: "latest",
-          micro: "server"
-        }
-      },
-      template: {
-        metadata: {
-          labels: {
-            name: "api",
-            version: "latest",
-            micro: "server"
-          },
-          annotations: {
-            "prometheus.io/scrape": "true",
-            "prometheus.io/path": "/metrics",
-            "prometheus.io/port": "9000"
-          }
-        },
-        spec: {
-          containers: [
-            {
-              name: "micro",
-              env: [
-                {
-                  name: "MICRO_API_RESOLVER",
-                  value: "subdomain"
-                },
-                {
-                  name: "MICRO_AUTH_PUBLIC_KEY",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: (jwtCert.metadata as ObjectMeta).name,
-                      key: "tls.crt"
-                    }
-                  }
-                },
-                {
-                  name: "MICRO_AUTH_PRIVATE_KEY",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: (jwtCert.metadata as ObjectMeta).name,
-                      key: "tls.key"
-                    }
-                  }
-                },
-                {
-                  name: "MICRO_PROFILE",
-                  value: "client"
-                },
-                {
-                  name: "MICRO_PROXY",
-                  value: pulumi.interpolate`${networkService.metadata.name}.${networkService.metadata.namespace}:${networkService.spec.ports[0].port}`
-                }
-              ],
-              args: ["service", "api"],
-              image,
-              imagePullPolicy,
-              ports: [
-                {
-                  name: "api-port",
-                  containerPort: 8080
-                }
-              ],
-              readinessProbe: {
-                tcpSocket: {
-                  port: "api-port"
-                },
-                initialDelaySeconds: 5,
-                periodSeconds: 10
-              }
-            }
-          ]
-        }
-      }
-    }
-  },
-  { provider, dependsOn: [...server, jwtCert] }
-);
 
 export const apiService = new k8s.core.v1.Service(
   "micro-api-service",
@@ -585,97 +485,6 @@ export const apiService = new k8s.core.v1.Service(
     }
   },
   { provider, dependsOn: apiDeployment }
-);
-
-export const proxyDeployment = new k8s.apps.v1.Deployment(
-  "micro-proxy-deployment",
-  {
-    metadata: {
-      name: "micro-proxy",
-      namespace: "server",
-      labels: {
-        name: "proxy",
-        version: "latest",
-        micro: "server"
-      }
-    },
-    spec: {
-      replicas,
-      selector: {
-        matchLabels: {
-          name: "proxy",
-          version: "latest",
-          micro: "server"
-        }
-      },
-      template: {
-        metadata: {
-          labels: {
-            name: "proxy",
-            version: "latest",
-            micro: "server"
-          },
-          annotations: {
-            "prometheus.io/scrape": "true",
-            "prometheus.io/path": "/metrics",
-            "prometheus.io/port": "9000"
-          }
-        },
-        spec: {
-          containers: [
-            {
-              name: "micro",
-              env: [
-                {
-                  name: "MICRO_AUTH_PUBLIC_KEY",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: (jwtCert.metadata as ObjectMeta).name,
-                      key: "tls.crt"
-                    }
-                  }
-                },
-                {
-                  name: "MICRO_AUTH_PRIVATE_KEY",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: (jwtCert.metadata as ObjectMeta).name,
-                      key: "tls.key"
-                    }
-                  }
-                },
-                {
-                  name: "MICRO_PROFILE",
-                  value: "client"
-                },
-                {
-                  name: "MICRO_PROXY",
-                  value: pulumi.interpolate`${networkService.metadata.name}.${networkService.metadata.namespace}:${networkService.spec.ports[0].port}`
-                }
-              ],
-              args: ["service", "proxy"],
-              image,
-              imagePullPolicy,
-              ports: [
-                {
-                  name: "proxy-port",
-                  containerPort: 8081
-                }
-              ],
-              readinessProbe: {
-                tcpSocket: {
-                  port: "proxy-port"
-                },
-                initialDelaySeconds: 5,
-                periodSeconds: 10
-              }
-            }
-          ]
-        }
-      }
-    }
-  },
-  { provider, dependsOn: [...server, jwtCert] }
 );
 
 export const proxyService = new k8s.core.v1.Service(

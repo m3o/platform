@@ -68,25 +68,22 @@ var Profile = &profile.Profile{
 			}
 		}
 
-		// only configure the blob store for the store and runtime services
-		if ctx.Args().Get(1) == "runtime" || ctx.Args().Get(1) == "store" {
-			opts := []s3.Option{
-				s3.Credentials(
-					os.Getenv("MICRO_BLOB_STORE_ACCESS_KEY"),
-					os.Getenv("MICRO_BLOB_STORE_SECRET_KEY"),
-				),
-				s3.Endpoint(os.Getenv("MICRO_BLOB_STORE_ENDPOINT")),
-				s3.Region(os.Getenv("MICRO_BLOB_STORE_REGION")),
-				s3.Bucket(os.Getenv("MICRO_BLOB_STORE_BUCKET")),
-			}
-			if val := os.Getenv("MICRO_BLOB_STORE_INSECURE"); len(val) > 0 {
-				opts = append(opts, s3.Insecure())
-			}
+		opts := []s3.Option{
+			s3.Credentials(
+				os.Getenv("MICRO_BLOB_STORE_ACCESS_KEY"),
+				os.Getenv("MICRO_BLOB_STORE_SECRET_KEY"),
+			),
+			s3.Endpoint(os.Getenv("MICRO_BLOB_STORE_ENDPOINT")),
+			s3.Region(os.Getenv("MICRO_BLOB_STORE_REGION")),
+			s3.Bucket(os.Getenv("MICRO_BLOB_STORE_BUCKET")),
+		}
+		if val := os.Getenv("MICRO_BLOB_STORE_INSECURE"); len(val) > 0 {
+			opts = append(opts, s3.Insecure())
+		}
 
-			store.DefaultBlobStore, err = s3.NewBlobStore(opts...)
-			if err != nil {
-				logger.Fatalf("Error configuring s3 blob store: %v", err)
-			}
+		store.DefaultBlobStore, err = s3.NewBlobStore(opts...)
+		if err != nil {
+			logger.Fatalf("Error configuring s3 blob store: %v", err)
 		}
 
 		reporterAddress := os.Getenv("MICRO_TRACING_REPORTER_ADDRESS")
